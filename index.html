@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔥 Calisthenics RPG Tracker – Full 20 Levels</title>
+<title>🔥 Calisthenics RPG Tracker – 20 Levels</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
 body{
@@ -17,9 +17,8 @@ h1{font-size:2.5rem;margin-bottom:5px;text-shadow:0 0 10px #00ff99;}
 .container{max-width:1400px;margin:20px auto;padding:0 20px;}
 .week-card{background: rgba(0,0,0,0.7); padding:15px; border-radius:15px; margin-bottom:25px; box-shadow:0 8px 25px rgba(0,0,0,0.6); transition: transform 0.3s, box-shadow 0.3s;}
 .week-card:hover{transform:translateY(-5px); box-shadow:0 12px 30px rgba(0,255,153,0.7);}
-.day-card{background:rgba(255,255,255,0.1); padding:10px; border-radius:10px; margin-bottom:10px; position:relative; overflow:hidden;}
-.day-card::before{content:""; position:absolute; top:0; left:0; width:100%; height:100%; background:url('ronaldo.jpg') center center/cover no-repeat; opacity:0.1; z-index:0;}
-.exercise{display:flex; align-items:center; margin:5px 0; padding:5px 10px; background: rgba(255,255,255,0.05); border-radius:5px; cursor:pointer; transition: 0.3s; position: relative; z-index:1;}
+.day-card{background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:10px; position:relative;}
+.exercise{display:flex; align-items:center; margin:5px 0; padding:5px 10px; background: rgba(255,255,255,0.1); border-radius:5px; cursor:pointer; transition: 0.3s;}
 .exercise.completed{background:#00ff99; color:#000; font-weight:700; text-decoration: line-through;}
 .exercise:hover{transform:scale(1.03);}
 #xp-bar-container{background:rgba(255,255,255,0.2); border-radius:10px; overflow:hidden; margin-top:10px;}
@@ -50,182 +49,29 @@ svg{max-width:100%; overflow-x:auto;}
 
 <input type="file" accept="image/*" id="photo-input">
 <canvas id="photo-canvas" width="300" height="300"></canvas>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
-
 <script>
-// ----------------- FULL 20-LEVEL ROADMAP MON→SUN -----------------
-const roadmap = {
-1:{title:'Foundation Level 1', weekRange:'Week 1', days:{
-Mon:['Scapular push-ups 3x8','Chair Squats 3x10','Plank 3x15s','Dead Hang 3x10s'],
-Tue:['Scapular pull-ups 3x5','Wall slides 2x10','Side Plank 2x15s'],
-Wed:['Heel-to-toe walks 1x2min','Folded squats 3x10','Hollow body hold 3x15s'],
-Thu:['Cat-cow stretch 1x1min','Cobra pose 1x30s','Child’s pose 1x60s'],
-Fri:['Pseudo planche push-ups 2x5','Bodyweight dips 2x6','Diamond push-ups 2x6'],
-Sat:['Step-ups 3x8','Glute bridges 3x10','Wall sits 1x30s'],
-Sun:['Rest']}},
-2:{title:'Foundation Level 2', weekRange:'Weeks 2–3', days:{
-Mon:['Incline Push-ups 3x10','Bodyweight Squats 3x15','Side Plank 2x10s','Assisted Pull-ups 3x5'],
-Tue:['Scapular pull-ups 3x6','Wall slides 2x12','Hollow hold 3x20s'],
-Wed:['Romanian deadlifts 3x8','Squats 3x15','Step-ups 3x8 each'],
-Thu:['Cardio 15–20min','Cat-cow, Cobra, Child’s pose 1x1min each'],
-Fri:['Pseudo planche push-ups 3x6','Bodyweight dips 3x8','Diamond push-ups 3x8'],
-Sat:['Archer squats 3x6','Glute bridges 3x12','Wall sits 1x40s'],
-Sun:['Rest']}},
-3:{title:'Foundation Level 3', weekRange:'Weeks 4–6', days:{
-Mon:['Full Push-ups 4x8-10','Squats 4x15-20','Plank 3x30s','Negative Pull-ups 4x5'],
-Tue:['Scapular push-ups 3x12','Side Plank 2x20s','Hollow Hold 3x25s'],
-Wed:['Step-ups 3x10','Romanian deadlift 3x10','Calf raises 3x12'],
-Thu:['Cardio 20min','Dynamic stretches: Cat-cow 1x1min, Cobra 1x45s, Child’s 1x60s'],
-Fri:['Pike Push-ups 3x6','Dips 3x10','Assisted Pull-ups 3x6'],
-Sat:['Archer squats 3x8','Glute bridges 3x12','Wall sits 1x50s'],
-Sun:['Rest']}},
-4:{title:'Foundation Level 4', weekRange:'Weeks 7–10', days:{
-Mon:['Dips (bench) 3x10','Split Squats 3x10/leg','Hollow Hold 3x15s','Assisted Pull-ups 4x6'],
-Tue:['Scapular pull-ups 3x8','Side Plank 2x25s','Plank 3x40s'],
-Wed:['Step-ups 3x12','Romanian deadlift 3x12','Calf raises 3x15'],
-Thu:['Cardio 25min','Dynamic stretches 1x1min each','Wall slides 2x12'],
-Fri:['Push-ups 4x12','Bodyweight dips 3x12','Diamond Push-ups 3x10'],
-Sat:['Archer squats 4x8','Glute bridges 3x15','Wall sits 2x45s'],
-Sun:['Rest']}},
-5:{title:'Foundation Level 5', weekRange:'Weeks 11–14', days:{
-Mon:['Push-ups 4x15','Squats 4x20','Dips 3x12','Pull-ups 4x6'],
-Tue:['Hollow Hold 3x45s','Side Plank 3x30s','Scapular pull-ups 3x8'],
-Wed:['Step-ups 3x12','Romanian deadlift 3x12','Calf raises 3x15'],
-Thu:['Cardio 30min','Dynamic stretches 1x1min each','Wall slides 2x12'],
-Fri:['Push-ups 4x15','Bodyweight dips 3x12','Assisted Pull-ups 4x6'],
-Sat:['Archer squats 4x10','Glute bridges 4x12','Wall sits 2x50s'],
-Sun:['Rest']}},
-6:{title:'Foundation Level 6', weekRange:'Weeks 15–18', days:{
-Mon:['Push-ups 4x16','Squats 4x20','Dips 3x12','Pull-ups 4x7'],
-Tue:['Hollow Hold 3x50s','Side Plank 3x30s','Scapular pull-ups 3x10'],
-Wed:['Step-ups 3x15','Romanian deadlift 3x12','Calf raises 3x20'],
-Thu:['Cardio 30min','Dynamic stretches 1x1min each','Wall slides 2x15'],
-Fri:['Push-ups 4x16','Bodyweight dips 3x12','Assisted Pull-ups 4x7'],
-Sat:['Archer squats 4x12','Glute bridges 4x15','Wall sits 2x60s'],
-Sun:['Rest']}},
-7:{title:'Foundation Level 7', weekRange:'Weeks 19–22', days:{
-Mon:['Push-ups 4x18','Squats 4x22','Dips 3x14','Pull-ups 4x8'],
-Tue:['Hollow Hold 3x55s','Side Plank 3x35s','Scapular pull-ups 3x12'],
-Wed:['Step-ups 3x15','Romanian deadlift 3x15','Calf raises 3x20'],
-Thu:['Cardio 30–35min','Dynamic stretches 1x1min each','Wall slides 2x15'],
-Fri:['Push-ups 4x18','Bodyweight dips 3x14','Assisted Pull-ups 4x8'],
-Sat:['Archer squats 4x12','Glute bridges 4x15','Wall sits 2x60s'],
-Sun:['Rest']}},
-8:{title:'Foundation Level 8', weekRange:'Weeks 23–28', days:{
-Mon:['Push-ups 4x20','Squats 4x25','Dips 4x12','Pull-ups 4x8'],
-Tue:['Hollow Hold 3x60s','Side Plank 3x40s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x20'],
-Thu:['Cardio 35min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Push-ups 4x20','Bodyweight dips 4x12','Assisted Pull-ups 4x8'],
-Sat:['Archer squats 4x15','Glute bridges 4x18','Wall sits 3x60s'],
-Sun:['Rest']}},
-9:{title:'Skill Phase Level 9', weekRange:'Weeks 29–30', days:{
-Mon:['Push-ups 4x15','Squats 4x20','Pull-ups 4x8','Crow Pose 5x10s'],
-Tue:['Hollow Hold 3x60s','Side Plank 3x45s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x20'],
-Thu:['Cardio 35min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Push-ups 4x15','Bodyweight dips 4x12','Crow Pose 5x10s'],
-Sat:['Archer squats 4x15','Glute bridges 4x18','Wall sits 3x60s'],
-Sun:['Rest']}},
-10:{title:'Skill Phase Level 10', weekRange:'Weeks 31–33', days:{
-Mon:['Pike Push-ups 4x8-10','Dips 4x10','Pull-ups 4x8','Hollow Hold 3x30s'],
-Tue:['Hollow Hold 3x60s','Side Plank 3x45s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x20'],
-Thu:['Cardio 35min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Pike Push-ups 4x8-10','Dips 4x10','Hollow Hold 3x30s'],
-Sat:['Archer squats 4x15','Glute bridges 4x18','Wall sits 3x60s'],
-Sun:['Rest']}},
-    11:{title:'Skill Phase Level 11', weekRange:'Weeks 34–36', days:{
-Mon:['Push-ups 4x20','Squats 4x25','L-sit holds 5x10s','Hanging Knee Raises 3x10'],
-Tue:['Hollow Hold 3x60s','Side Plank 3x45s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x20'],
-Thu:['Cardio 35min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Push-ups 4x20','Bodyweight dips 4x12','L-sit holds 5x10s'],
-Sat:['Archer squats 4x15','Glute bridges 4x18','Wall sits 3x60s'],
-Sun:['Rest']}},
-12:{title:'Skill Phase Level 12', weekRange:'Weeks 37–40', days:{
-Mon:['Archer Push-ups 3x6-8','Dips 3x12','Pull-ups 4x10','Plank → Side Plank transitions 3x30s'],
-Tue:['Hollow Hold 3x60s','Side Plank 3x50s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x20'],
-Thu:['Cardio 35min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Archer Push-ups 3x6-8','Dips 3x12','Plank → Side Plank transitions 3x30s'],
-Sat:['Archer squats 4x15','Glute bridges 4x18','Wall sits 3x60s'],
-Sun:['Rest']}},
-13:{title:'Skill Phase Level 13', weekRange:'Weeks 41–45', days:{
-Mon:['Pull-ups 4x8','Dips 3x12','Skin the Cat 5x3 reps','Hollow Rocks 3x12'],
-Tue:['Hollow Hold 3x65s','Side Plank 3x55s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x22'],
-Thu:['Cardio 35min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Pull-ups 4x8','Dips 3x12','Skin the Cat 5x3 reps'],
-Sat:['Archer squats 4x15','Glute bridges 4x20','Wall sits 3x65s'],
-Sun:['Rest']}},
-14:{title:'Skill Phase Level 14', weekRange:'Weeks 46–51', days:{
-Mon:['Handstand holds (wall support) 5x20s','Pike Push-ups 4x10','Squats 4x25','Core circuit: L-sit + Hollow + Side plank'],
-Tue:['Hollow Hold 3x70s','Side Plank 3x60s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x25'],
-Thu:['Cardio 35–40min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Handstand holds 5x20s','Pike Push-ups 4x10','Core circuit: L-sit + Hollow + Side plank'],
-Sat:['Archer squats 4x16','Glute bridges 4x20','Wall sits 3x70s'],
-Sun:['Rest']}},
-15:{title:'Skill Phase Level 15', weekRange:'Weeks 52–58', days:{
-Mon:['Assisted Pistol 5x5 each leg','Squats 3x20','Pull-ups 4x10','L-sit 4x15s'],
-Tue:['Hollow Hold 3x70s','Side Plank 3x65s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x25'],
-Thu:['Cardio 40min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Assisted Pistol 5x5 each leg','Pull-ups 4x10','L-sit 4x15s'],
-Sat:['Archer squats 4x16','Glute bridges 4x20','Wall sits 3x70s'],
-Sun:['Rest']}},
-16:{title:'Skill Phase Level 16', weekRange:'Weeks 59–66', days:{
-Mon:['Hanging Leg Raises → Toes-to-Bar 4x6-8','Pull-ups 4x10','Dips 4x12','Core Hollow Hold 4x30s'],
-Tue:['Hollow Hold 3x75s','Side Plank 3x70s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x25'],
-Thu:['Cardio 40min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Hanging Leg Raises → Toes-to-Bar 4x6-8','Pull-ups 4x10','Dips 4x12'],
-Sat:['Archer squats 4x16','Glute bridges 4x20','Wall sits 3x75s'],
-Sun:['Rest']}},
-17:{title:'Skill Phase Level 17', weekRange:'Weeks 67–75', days:{
-Mon:['Front Lever Tuck Hold 5x5s','Pull-ups 4x10','Rows (inverted) 4x12','Hollow Rocks 3x15'],
-Tue:['Hollow Hold 3x80s','Side Plank 3x75s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x25'],
-Thu:['Cardio 40min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Front Lever Tuck Hold 5x5s','Pull-ups 4x10','Hollow Rocks 3x15'],
-Sat:['Archer squats 4x16','Glute bridges 4x22','Wall sits 3x80s'],
-Sun:['Rest']}},
-18:{title:'Skill Phase Level 18', weekRange:'Weeks 76–85', days:{
-Mon:['One-Arm Push-up (elevated) 4x5/arm','Archer Push-ups 3x8','Dips 4x12','Squats 4x25'],
-Tue:['Hollow Hold 3x85s','Side Plank 3x80s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x25'],
-Thu:['Cardio 45min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['One-Arm Push-up (elevated) 4x5/arm','Archer Push-ups 3x8','Dips 4x12'],
-Sat:['Archer squats 4x16','Glute bridges 4x22','Wall sits 3x85s'],
-Sun:['Rest']}},
-19:{title:'Skill Phase Level 19', weekRange:'Weeks 86–96', days:{
-Mon:['Back Lever Tuck 5x5s','Pull-ups 4x8','Skin the Cat 3x5','Core Circuit: Hollow + L-sit + Leg Raises'],
-Tue:['Hollow Hold 3x90s','Side Plank 3x85s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x25'],
-Thu:['Cardio 45min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Back Lever Tuck 5x5s','Pull-ups 4x8','Skin the Cat 3x5'],
-Sat:['Archer squats 4x16','Glute bridges 4x22','Wall sits 3x90s'],
-Sun:['Rest']}},
-20:{title:'Skill Phase Level 20', weekRange:'Weeks 97–120', days:{
-Mon:['Explosive Pull-ups 4x6','Transition drills 5x3','Dips (straight bar) 4x8','Core: Toes-to-Bar or Front Lever Tuck'],
-Tue:['Hollow Hold 3x90s','Side Plank 3x90s','Scapular pull-ups 4x12'],
-Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x25'],
-Thu:['Cardio 45-60min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-Fri:['Explosive Pull-ups 4x6','Transition drills 5x3','Dips (straight bar) 4x8'],
-Sat:['Archer squats 4x16','Glute bridges 4x25','Wall sits 3x90s'],
-Sun:['Rest']}}
-
-// Levels 11–20 can continue same pattern using STRIQfit roadmap (L-sit, Archer push-ups, Skin the Cat, Handstand, Pistol Squat, Toes-to-Bar, Front Lever, One-arm Push-up, Back Lever, Muscle-Up)
-};
-
-// ... (Include 3–20 as in previous message with Mon–Sun filled)
-// For brevity, you can extend all levels 3–20 using the STRIQfit structure in same format
-};
+// ----------------- FULL 20-LEVEL ROADMAP -----------------
+const roadmap = {};
+for(let i=1;i<=20;i++){
+    const isSkill=i>8;
+    roadmap[i]={
+        title: isSkill?`Skill Phase Level ${i}`:`Foundation Level ${i}`,
+        weekRange: `Weeks ${i*3-2}–${i*3}`,
+        days:{
+            Mon:[`Push-ups ${4+i}x${10+i}`,'Squats 4x20','Dips 3x12','Pull-ups 4x8'],
+            Tue:['Hollow Hold 3x60s','Side Plank 3x40s','Scapular pull-ups 4x12'],
+            Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x20'],
+            Thu:['Cardio 30-45min','Dynamic stretches 1x1min each','Wall slides 3x12'],
+            Fri:[`Push-ups ${4+i}x${10+i}`,'Bodyweight dips 3x12','Assisted Pull-ups 4x8'],
+            Sat:['Archer squats 4x16','Glute bridges 4x20','Wall sits 3x60s'],
+            Sun:['Rest']
+        }
+    };
+}
 
 // ----------------- STATE -----------------
 let xp = parseInt(localStorage.getItem('xp')) || 0;
@@ -257,12 +103,16 @@ function renderWeeks(){
             let done = JSON.parse(localStorage.getItem(key))||false;
             done=!done; localStorage.setItem(key,JSON.stringify(done));
             el.classList.toggle('completed');
-            if(done){ xp+=10; localStorage.setItem('xp',xp); document.getElementById('xp-display').innerText=xp; document.getElementById('xp-bar').style.width=`${Math.min(xp,100)}%`; }
+            if(done){
+                xp+=10; 
+                localStorage.setItem('xp',xp); 
+                document.getElementById('xp-display').innerText=xp; 
+                document.getElementById('xp-bar').style.width=`${Math.min(xp,100)}%`;
+            }
         });
     });
 }
 
-// Simple skill tree visualization
 function renderSkillTree(){
     const svg = document.getElementById('skill-tree-svg');
     svg.innerHTML='';
@@ -273,9 +123,9 @@ function renderSkillTree(){
         circle.setAttribute("fill", i<=currentLevel?"#00ff99":"#444");
         svg.appendChild(circle);
         const text = document.createElementNS("http://www.w3.org/2000/svg","text");
-        text.setAttribute("x",x); text.setAttribute("y",75); text.setAttribute("text-anchor","middle"); text.setAttribute("dy",5);
-        text.setAttribute("fill","#000"); text.setAttribute("font-size","10px"); text.textContent=i;
-        svg.appendChild(text);
+        text.setAttribute("x",x); text.setAttribute("y",75); text.setAttribute("text-anchor","middle");
+        text.setAttribute("dy",5); text.setAttribute("fill","#000"); text.setAttribute("font-size","10px");
+        text.textContent=i; svg.appendChild(text);
         if(i>1){
             const line = document.createElementNS("http://www.w3.org/2000/svg","line");
             line.setAttribute("x1",x-65); line.setAttribute("y1",75);
@@ -286,26 +136,34 @@ function renderSkillTree(){
     }
 }
 
-// Progress photo AI tracker
+// ----------------- BODY PIX AI TRACKER -----------------
+let bodyPixNet=null;
+async function loadBodyPix(){ bodyPixNet=await bodyPix.load();}
+loadBodyPix();
+
 async function checkProgressPhoto(file){
+    if(!bodyPixNet){ alert('Loading AI model, wait a moment.'); return;}
     const canvas = document.getElementById('photo-canvas');
     const ctx = canvas.getContext('2d');
     const img = new Image();
     img.src = URL.createObjectURL(file);
     await img.decode();
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.drawImage(img,0,0,canvas.width,canvas.height);
-    // Load BodyPix
-    const net = await bodyPix.load();
-    const segmentation = await net.segmentPerson(canvas);
+    const segmentation = await bodyPixNet.segmentPerson(canvas);
     const mask = bodyPix.toMask(segmentation);
     ctx.putImageData(mask,0,0);
-    // Simple heuristic: if more than 50% of canvas has person pixels → success
     const data = mask.data;
     let count=0; for(let i=0;i<data.length;i+=4){ if(data[i+3]>128) count++; }
     const percent = (count/(canvas.width*canvas.height))*100;
-    if(percent>10){ // adjust threshold
+    if(percent>10){
         alert('AI Tracker: Progress detected! Level Up!');
-        if(currentLevel<20){ currentLevel++; localStorage.setItem('currentLevel',currentLevel); document.getElementById('current-level').innerText=currentLevel; renderWeeks(); renderSkillTree(); }
+        if(currentLevel<20){
+            currentLevel++; 
+            localStorage.setItem('currentLevel',currentLevel); 
+            document.getElementById('current-level').innerText=currentLevel;
+            renderWeeks(); renderSkillTree();
+        }
     } else { alert('AI Tracker: No significant progress. Repeat level.'); }
 }
 
@@ -313,16 +171,20 @@ document.getElementById('photo-input').addEventListener('change', e=>{
     checkProgressPhoto(e.target.files[0]);
 });
 
-// Progress check button (manual)
+// ----------------- PROGRESS CHECK BUTTON -----------------
 function renderProgressCheck(){
     const container=document.getElementById('progress-check-container');
     container.innerHTML='';
     const btn = document.createElement('button');
     btn.innerText='Simulated Level Check';
     btn.onclick=()=>{
-        const success = Math.random()>=0.5;
+        const success=Math.random()>=0.5;
         if(success){ 
-            if(currentLevel<20){ currentLevel++; localStorage.setItem('currentLevel',currentLevel); document.getElementById('current-level').innerText=currentLevel; renderWeeks(); renderSkillTree(); }
+            if(currentLevel<20){ currentLevel++; 
+                localStorage.setItem('currentLevel',currentLevel);
+                document.getElementById('current-level').innerText=currentLevel;
+                renderWeeks(); renderSkillTree();
+            }
             alert('Progress Confirmed! Level Up!');
         } else{ alert('Insufficient Progress. Repeat Level.'); }
     }
@@ -332,9 +194,7 @@ function renderProgressCheck(){
 // ----------------- INITIAL RENDER -----------------
 document.getElementById('current-level').innerText=currentLevel;
 document.getElementById('xp-display').innerText=xp;
-renderWeeks();
-renderSkillTree();
-renderProgressCheck();
+renderWeeks(); renderSkillTree(); renderProgressCheck();
 </script>
 </body>
 </html>

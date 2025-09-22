@@ -17,8 +17,9 @@ h1{font-size:2.5rem;margin-bottom:5px;text-shadow:0 0 10px #00ff99;}
 .container{max-width:1400px;margin:20px auto;padding:0 20px;}
 .week-card{background: rgba(0,0,0,0.7); padding:15px; border-radius:15px; margin-bottom:25px; box-shadow:0 8px 25px rgba(0,0,0,0.6); transition: transform 0.3s, box-shadow 0.3s;}
 .week-card:hover{transform:translateY(-5px); box-shadow:0 12px 30px rgba(0,255,153,0.7);}
-.day-card{background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:10px; position:relative;}
-.exercise{display:flex; align-items:center; margin:5px 0; padding:5px 10px; background: rgba(255,255,255,0.1); border-radius:5px; cursor:pointer; transition: 0.3s;}
+.day-card{background:rgba(255,255,255,0.1); padding:10px; border-radius:10px; margin-bottom:10px; position:relative; overflow:hidden;}
+.day-card::before{content:""; position:absolute; top:0; left:0; width:100%; height:100%; background:url('ronaldo.jpg') center center/cover no-repeat; opacity:0.1; z-index:0;}
+.exercise{display:flex; align-items:center; margin:5px 0; padding:5px 10px; background: rgba(255,255,255,0.05); border-radius:5px; cursor:pointer; transition: 0.3s; position: relative; z-index:1;}
 .exercise.completed{background:#00ff99; color:#000; font-weight:700; text-decoration: line-through;}
 .exercise:hover{transform:scale(1.03);}
 #xp-bar-container{background:rgba(255,255,255,0.2); border-radius:10px; overflow:hidden; margin-top:10px;}
@@ -49,28 +50,22 @@ svg{max-width:100%; overflow-x:auto;}
 
 <input type="file" accept="image/*" id="photo-input">
 <canvas id="photo-canvas" width="300" height="300"></canvas>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix"></script>
 <script>
-// ----------------- FULL 20-LEVEL ROADMAP -----------------
+// ----------------- FULL 20-LEVEL ROADMAP MON→SUN -----------------
 const roadmap = {};
 for(let i=1;i<=20;i++){
-    const isSkill=i>8;
-    roadmap[i]={
-        title: isSkill?`Skill Phase Level ${i}`:`Foundation Level ${i}`,
-        weekRange: `Weeks ${i*3-2}–${i*3}`,
-        days:{
-            Mon:[`Push-ups ${4+i}x${10+i}`,'Squats 4x20','Dips 3x12','Pull-ups 4x8'],
-            Tue:['Hollow Hold 3x60s','Side Plank 3x40s','Scapular pull-ups 4x12'],
-            Wed:['Step-ups 4x12','Romanian deadlift 4x12','Calf raises 4x20'],
-            Thu:['Cardio 30-45min','Dynamic stretches 1x1min each','Wall slides 3x12'],
-            Fri:[`Push-ups ${4+i}x${10+i}`,'Bodyweight dips 3x12','Assisted Pull-ups 4x8'],
-            Sat:['Archer squats 4x16','Glute bridges 4x20','Wall sits 3x60s'],
-            Sun:['Rest']
-        }
-    };
+    roadmap[i] = {title: i<=8 ? `Foundation Level ${i}` : `Skill Phase Level ${i}`, weekRange: `Week ${i}`, days:{
+        Mon:[`Push-ups ${i}x10`, `Squats ${i}x15`, `Plank ${i}x15s`, `Pull exercise ${i}x5`],
+        Tue:[`Hollow Hold ${i}x15s`, `Side Plank ${i}x10s`, `Pull-ups ${i}x5`],
+        Wed:[`Step-ups ${i}x10`, `Romanian Deadlift ${i}x10`, `Calf Raises ${i}x15`],
+        Thu:[`Cardio 15–20min`, `Dynamic stretches`],
+        Fri:[`Push-ups ${i}x12`, `Dips ${i}x8`, `Core exercise ${i}x10`],
+        Sat:[`Archer Squats ${i}x10`, `Glute Bridges ${i}x12`, `Wall sits ${i}x30s`],
+        Sun:['Rest']
+    }};
 }
 
 // ----------------- STATE -----------------
@@ -101,18 +96,18 @@ function renderWeeks(){
         el.addEventListener('click', ()=>{
             const key = el.getAttribute('data-key');
             let done = JSON.parse(localStorage.getItem(key))||false;
-            done=!done; localStorage.setItem(key,JSON.stringify(done));
+            done = !done;
+            localStorage.setItem(key,JSON.stringify(done));
             el.classList.toggle('completed');
-            if(done){
-                xp+=10; 
-                localStorage.setItem('xp',xp); 
-                document.getElementById('xp-display').innerText=xp; 
-                document.getElementById('xp-bar').style.width=`${Math.min(xp,100)}%`;
-            }
+            if(done){ xp+=10; } else { xp=Math.max(xp-10,0); }
+            localStorage.setItem('xp',xp);
+            document.getElementById('xp-display').innerText=xp;
+            document.getElementById('xp-bar').style.width=`${Math.min(xp,100)}%`;
         });
     });
 }
 
+// Skill tree visualization
 function renderSkillTree(){
     const svg = document.getElementById('skill-tree-svg');
     svg.innerHTML='';
@@ -123,9 +118,9 @@ function renderSkillTree(){
         circle.setAttribute("fill", i<=currentLevel?"#00ff99":"#444");
         svg.appendChild(circle);
         const text = document.createElementNS("http://www.w3.org/2000/svg","text");
-        text.setAttribute("x",x); text.setAttribute("y",75); text.setAttribute("text-anchor","middle");
-        text.setAttribute("dy",5); text.setAttribute("fill","#000"); text.setAttribute("font-size","10px");
-        text.textContent=i; svg.appendChild(text);
+        text.setAttribute("x",x); text.setAttribute("y",75); text.setAttribute("text-anchor","middle"); text.setAttribute("dy",5);
+        text.setAttribute("fill","#000"); text.setAttribute("font-size","10px"); text.textContent=i;
+        svg.appendChild(text);
         if(i>1){
             const line = document.createElementNS("http://www.w3.org/2000/svg","line");
             line.setAttribute("x1",x-65); line.setAttribute("y1",75);
@@ -136,34 +131,24 @@ function renderSkillTree(){
     }
 }
 
-// ----------------- BODY PIX AI TRACKER -----------------
-let bodyPixNet=null;
-async function loadBodyPix(){ bodyPixNet=await bodyPix.load();}
-loadBodyPix();
-
+// Progress photo AI tracker
 async function checkProgressPhoto(file){
-    if(!bodyPixNet){ alert('Loading AI model, wait a moment.'); return;}
     const canvas = document.getElementById('photo-canvas');
     const ctx = canvas.getContext('2d');
     const img = new Image();
     img.src = URL.createObjectURL(file);
     await img.decode();
-    ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.drawImage(img,0,0,canvas.width,canvas.height);
-    const segmentation = await bodyPixNet.segmentPerson(canvas);
+    const net = await bodyPix.load();
+    const segmentation = await net.segmentPerson(canvas);
     const mask = bodyPix.toMask(segmentation);
     ctx.putImageData(mask,0,0);
-    const data = mask.data;
-    let count=0; for(let i=0;i<data.length;i+=4){ if(data[i+3]>128) count++; }
+    const data = mask.data; let count=0;
+    for(let i=0;i<data.length;i+=4){ if(data[i+3]>128) count++; }
     const percent = (count/(canvas.width*canvas.height))*100;
     if(percent>10){
         alert('AI Tracker: Progress detected! Level Up!');
-        if(currentLevel<20){
-            currentLevel++; 
-            localStorage.setItem('currentLevel',currentLevel); 
-            document.getElementById('current-level').innerText=currentLevel;
-            renderWeeks(); renderSkillTree();
-        }
+        if(currentLevel<20){ currentLevel++; localStorage.setItem('currentLevel',currentLevel); document.getElementById('current-level').innerText=currentLevel; renderWeeks(); renderSkillTree(); }
     } else { alert('AI Tracker: No significant progress. Repeat level.'); }
 }
 
@@ -171,20 +156,16 @@ document.getElementById('photo-input').addEventListener('change', e=>{
     checkProgressPhoto(e.target.files[0]);
 });
 
-// ----------------- PROGRESS CHECK BUTTON -----------------
+// Manual Progress Check
 function renderProgressCheck(){
     const container=document.getElementById('progress-check-container');
     container.innerHTML='';
     const btn = document.createElement('button');
     btn.innerText='Simulated Level Check';
     btn.onclick=()=>{
-        const success=Math.random()>=0.5;
-        if(success){ 
-            if(currentLevel<20){ currentLevel++; 
-                localStorage.setItem('currentLevel',currentLevel);
-                document.getElementById('current-level').innerText=currentLevel;
-                renderWeeks(); renderSkillTree();
-            }
+        const success = Math.random()>=0.5;
+        if(success){
+            if(currentLevel<20){ currentLevel++; localStorage.setItem('currentLevel',currentLevel); document.getElementById('current-level').innerText=currentLevel; renderWeeks(); renderSkillTree(); }
             alert('Progress Confirmed! Level Up!');
         } else{ alert('Insufficient Progress. Repeat Level.'); }
     }
@@ -194,7 +175,9 @@ function renderProgressCheck(){
 // ----------------- INITIAL RENDER -----------------
 document.getElementById('current-level').innerText=currentLevel;
 document.getElementById('xp-display').innerText=xp;
-renderWeeks(); renderSkillTree(); renderProgressCheck();
+renderWeeks();
+renderSkillTree();
+renderProgressCheck();
 </script>
 </body>
 </html>

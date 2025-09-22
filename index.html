@@ -170,6 +170,26 @@ function renderProgressCheck(){
         } else{ alert('Insufficient Progress. Repeat Level.'); }
     }
     container.appendChild(btn);
+    // --- Reset Total XP Button ---
+function renderXPReset(){
+    const container = document.getElementById('progress-check-container');
+    const btn = document.createElement('button');
+    btn.innerText = 'Reset Total XP';
+    btn.style.background = '#ff4d4d';
+    btn.style.color = '#fff';
+    btn.onclick = () => {
+        xp = 0;
+        localStorage.setItem('xp', xp);
+        document.getElementById('xp-display').innerText = xp;
+        document.getElementById('xp-bar').style.width = '0%';
+        alert('Total XP has been reset to 0!');
+    };
+    container.appendChild(btn);
+}
+
+// Call after rendering progress check
+renderXPReset();
+
 }
 
 // ----------------- INITIAL RENDER -----------------

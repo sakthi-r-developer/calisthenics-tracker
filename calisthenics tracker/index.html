@@ -124,49 +124,171 @@
    Data model & roadmap seed
    ------------------------- */
 const STORAGE_KEY = 'calisthenics_progress_v1';
-
-const roadmap = {
-  1: {title:'Foundation Phase — Level 1', weekRange:'Week 1', exercises:[
+    const roadmap = {
+  1: { title:'Foundation Phase (Level 1)', weekRange:'Week 1', exercises:[
     {name:'Wall/Knee Push-ups', sets:3, type:'reps', setsDefault:[8,8,8]},
     {name:'Chair Squats', sets:3, type:'reps', setsDefault:[10,10,10]},
     {name:'Plank', sets:3, type:'hold', setsDefault:[15,15,15]},
     {name:'Dead Hang', sets:3, type:'hold', setsDefault:[10,10,10]},
   ]},
-  2: {title:'Foundation — Level 2', weekRange:'Weeks 2–3', exercises:[
+
+  2: { title:'Foundation Phase (Level 2)', weekRange:'Weeks 2–3', exercises:[
     {name:'Incline Push-ups', sets:3, type:'reps', setsDefault:[10,10,10]},
     {name:'Bodyweight Squats', sets:3, type:'reps', setsDefault:[15,15,15]},
     {name:'Side Plank', sets:2, type:'hold', side:true, setsDefault:[10,10]},
     {name:'Assisted Pull-ups', sets:3, type:'reps', setsDefault:[5,5,5]},
   ]},
-  3: {title:'Foundation — Level 3', weekRange:'Weeks 4–6', exercises:[
-    {name:'Full Push-ups', sets:4, type:'reps', setsDefault:[8,8,8,8]},
+
+  3: { title:'Foundation Phase (Level 3)', weekRange:'Weeks 4–6', exercises:[
+    {name:'Full Push-ups', sets:4, type:'reps', setsDefault:[8,8,9,9]},
     {name:'Squats', sets:4, type:'reps', setsDefault:[15,15,15,15]},
     {name:'Plank', sets:3, type:'hold', setsDefault:[30,30,30]},
     {name:'Negative Pull-ups', sets:4, type:'reps', setsDefault:[5,5,5,5]},
   ]},
-  4: {title:'Foundation — Level 4', weekRange:'Weeks 7–10', exercises:[
+
+  4: { title:'Foundation Phase (Level 4)', weekRange:'Weeks 7–10', exercises:[
     {name:'Dips (bench)', sets:3, type:'reps', setsDefault:[10,10,10]},
     {name:'Split Squats', sets:3, type:'reps', side:true, setsDefault:[10,10,10]},
     {name:'Hollow Hold', sets:3, type:'hold', setsDefault:[15,15,15]},
     {name:'Assisted Pull-ups', sets:4, type:'reps', setsDefault:[6,6,6,6]},
   ]},
-  // For brevity: many levels below share similar structure. We'll add quick placeholders up to 20.
+
+  5: { title:'Foundation Phase (Level 5)', weekRange:'Weeks 11–13', exercises:[
+    {name:'Push-ups', sets:4, type:'reps', setsDefault:[15,15,15,15]},
+    {name:'Squats', sets:4, type:'reps', setsDefault:[20,20,20,20]},
+    {name:'Dips (bench/parallel)', sets:3, type:'reps', setsDefault:[12,12,12]},
+    {name:'Pull-ups (full or assisted)', sets:4, type:'reps', setsDefault:[6,6,7,7]},
+    {name:'Plank/Hollow', sets:3, type:'hold', setsDefault:[45,45,45]},
+  ]},
+
+  6: { title:'Foundation Phase (Level 6)', weekRange:'Weeks 14–16', exercises:[
+    {name:'Push-ups', sets:4, type:'reps', setsDefault:[15,15,15,16]},
+    {name:'Squats', sets:4, type:'reps', setsDefault:[20,20,20,20]},
+    {name:'Dips', sets:3, type:'reps', setsDefault:[12,12,12]},
+    {name:'Pull-ups', sets:4, type:'reps', setsDefault:[6,7,7,8]},
+    {name:'Plank/Hollow', sets:3, type:'hold', setsDefault:[50,50,50]},
+  ]},
+
+  7: { title:'Foundation Phase (Level 7)', weekRange:'Weeks 17–20', exercises:[
+    {name:'Push-ups', sets:4, type:'reps', setsDefault:[16,16,16,16]},
+    {name:'Squats', sets:4, type:'reps', setsDefault:[22,22,22,22]},
+    {name:'Dips', sets:3, type:'reps', setsDefault:[12,12,12]},
+    {name:'Pull-ups', sets:4, type:'reps', setsDefault:[7,7,8,8]},
+    {name:'Plank/Hollow', sets:3, type:'hold', setsDefault:[55,55,55]},
+  ]},
+
+  8: { title:'Foundation Phase (Level 8)', weekRange:'Weeks 21–28', exercises:[
+    {name:'Push-ups', sets:4, type:'reps', setsDefault:[15,15,15,18]},
+    {name:'Squats', sets:4, type:'reps', setsDefault:[20,20,22,22]},
+    {name:'Dips (bench/parallel)', sets:3, type:'reps', setsDefault:[12,12,12]},
+    {name:'Pull-ups (full or assisted)', sets:4, type:'reps', setsDefault:[6,7,8,8]},
+    {name:'Plank/Hollow', sets:3, type:'hold', setsDefault:[60,60,60]},
+  ]},
+
+  9: { title:'Skill Unlock Phase (Level 9) — Crow/Frog', weekRange:'Weeks 29–30', exercises:[
+    {name:'Push-ups', sets:4, type:'reps', setsDefault:[15,15,15,15]},
+    {name:'Squats', sets:4, type:'reps', setsDefault:[20,20,20,20]},
+    {name:'Pull-ups', sets:4, type:'reps', setsDefault:[8,8,8,8]},
+    {name:'Crow Pose / Frog Stand', sets:5, type:'hold', setsDefault:[10,10,10,10,10]},
+  ]},
+
+  10: { title:'Skill Unlock (Level 10) — Pike Push-ups', weekRange:'Weeks 31–33', exercises:[
+    {name:'Pike Push-ups', sets:4, type:'reps', setsDefault:[8,8,9,9]},
+    {name:'Dips', sets:4, type:'reps', setsDefault:[10,10,10,10]},
+    {name:'Pull-ups', sets:4, type:'reps', setsDefault:[8,8,8,8]},
+    {name:'Hollow Hold', sets:3, type:'hold', setsDefault:[30,30,30]},
+  ]},
+
+  11: { title:'Skill Unlock (Level 11) — L-sit (tuck)', weekRange:'Weeks 34–36', exercises:[
+    {name:'Push-ups', sets:4, type:'reps', setsDefault:[20,20,20,20]},
+    {name:'Squats', sets:4, type:'reps', setsDefault:[25,25,25,25]},
+    {name:'L-sit (tuck) holds', sets:5, type:'hold', setsDefault:[10,10,10,10,10]},
+    {name:'Hanging Knee Raises', sets:3, type:'reps', setsDefault:[10,10,10]},
+  ]},
+
+  12: { title:'Skill Unlock (Level 12) — Archer Push-ups prep', weekRange:'Weeks 37–40', exercises:[
+    {name:'Archer Push-ups', sets:3, type:'reps', setsDefault:[6,6,7]},
+    {name:'Dips', sets:3, type:'reps', setsDefault:[12,12,12]},
+    {name:'Pull-ups', sets:4, type:'reps', setsDefault:[10,10,10,10]},
+    {name:'Plank → Side Plank transitions', sets:3, type:'hold', setsDefault:[30,30,30]},
+  ]},
+
+  13: { title:'Skill Unlock (Level 13) — Skin the Cat', weekRange:'Weeks 41–45', exercises:[
+    {name:'Pull-ups', sets:4, type:'reps', setsDefault:[8,8,8,8]},
+    {name:'Dips', sets:3, type:'reps', setsDefault:[12,12,12]},
+    {name:'Skin the Cat', sets:5, type:'reps', setsDefault:[3,3,3,3,3]},
+    {name:'Hollow Rocks', sets:3, type:'reps', setsDefault:[12,12,12]},
+  ]},
+
+  14: { title:'Skill Unlock (Level 14) — Handstand (wall)', weekRange:'Weeks 46–51', exercises:[
+    {name:'Handstand holds (wall)', sets:5, type:'hold', setsDefault:[20,20,20,20,20]},
+    {name:'Pike Push-ups', sets:4, type:'reps', setsDefault:[10,10,10,10]},
+    {name:'Squats', sets:4, type:'reps', setsDefault:[25,25,25,25]},
+    {name:'Core circuit (L-sit + Hollow + Side plank)', sets:3, type:'hold', setsDefault:[30,30,30]},
+  ]},
+
+  15: { title:'Skill Unlock (Level 15) — Pistol Squat', weekRange:'Weeks 52–58', exercises:[
+    {name:'Assisted Pistol', sets:5, type:'reps', side:true, setsDefault:[5,5,5,5,5]},
+    {name:'Squats', sets:3, type:'reps', setsDefault:[20,20,20]},
+    {name:'Pull-ups', sets:4, type:'reps', setsDefault:[10,10,10,10]},
+    {name:'L-sit', sets:4, type:'hold', setsDefault:[15,15,15,15]},
+  ]},
+
+  16: { title:'Skill Unlock (Level 16) — Toes-to-Bar', weekRange:'Weeks 59–66', exercises:[
+    {name:'Hanging Leg Raises → Toes-to-Bar', sets:4, type:'reps', setsDefault:[6,6,7,7]},
+    {name:'Pull-ups', sets:4, type:'reps', setsDefault:[10,10,10,10]},
+    {name:'Dips', sets:4, type:'reps', setsDefault:[12,12,12,12]},
+    {name:'Core Hollow Hold', sets:4, type:'hold', setsDefault:[30,30,30,30]},
+  ]},
+
+  17: { title:'Skill Unlock (Level 17) — Front Lever (Tuck)', weekRange:'Weeks 67–75', exercises:[
+    {name:'Front Lever Tuck Hold', sets:5, type:'hold', setsDefault:[5,5,5,5,5]},
+    {name:'Pull-ups', sets:4, type:'reps', setsDefault:[10,10,10,10]},
+    {name:'Rows (inverted)', sets:4, type:'reps', setsDefault:[12,12,12,12]},
+    {name:'Hollow Rocks', sets:3, type:'reps', setsDefault:[15,15,15]},
+  ]},
+
+  18: { title:'Skill Unlock (Level 18) — One-Arm Push-up prep', weekRange:'Weeks 76–85', exercises:[
+    {name:'One-Arm Push-up (elevated)', sets:4, type:'reps', side:true, setsDefault:[5,5,5,5]},
+    {name:'Archer Push-ups', sets:3, type:'reps', setsDefault:[8,8,8]},
+    {name:'Dips', sets:4, type:'reps', setsDefault:[12,12,12,12]},
+    {name:'Squats', sets:4, type:'reps', setsDefault:[25,25,25,25]},
+  ]},
+
+  19: { title:'Skill Unlock (Level 19) — Back Lever (Tuck→Straddle)', weekRange:'Weeks 86–96', exercises:[
+    {name:'Back Lever Tuck', sets:5, type:'hold', setsDefault:[5,5,5,5,5]},
+    {name:'Pull-ups', sets:4, type:'reps', setsDefault:[8,8,8,8]},
+    {name:'Skin the Cat', sets:3, type:'reps', setsDefault:[5,5,5]},
+    {name:'Core Circuit (Hollow + L-sit + Leg Raises)', sets:3, type:'hold', setsDefault:[30,30,30]},
+  ]},
+
+  20: { title:'Skill Unlock (Level 20) — Muscle-Up (Final Boss)', weekRange:'Weeks 97–120', exercises:[
+    {name:'Explosive Pull-ups', sets:4, type:'reps', setsDefault:[6,6,6,6]},
+    {name:'Transition drills', sets:5, type:'reps', setsDefault:[3,3,3,3,3]},
+    {name:'Dips (straight bar)', sets:4, type:'reps', setsDefault:[8,8,8,8]},
+    {name:'Core (Toes-to-Bar or Front Lever Tuck)', sets:3, type:'reps', setsDefault:[8,8,8]},
+  ]},
 };
 
-for(let i=5;i<=20;i++){
+
+
+
+// Auto-generate placeholder levels beyond 20 if needed
+for(let i=21;i<=30;i++){
   if(!roadmap[i]){
     roadmap[i] = {
-      title: i<=8 ? `Foundation — Levels ${i}` : `Skill Phase — Level ${i}`,
-      weekRange: 'See roadmap',
-      exercises: [
-        {name:'Push-ups', sets:4, type:'reps', setsDefault:[15,15,15,15]},
-        {name:'Squats', sets:4, type:'reps', setsDefault:[20,20,20,20]},
-        {name: i>=9 ? 'Skill practice' : 'Dips', sets:3, type:'reps', setsDefault:[8,8,8]},
-        {name:'Core hold', sets:3, type:'hold', setsDefault:[45,45,45]},
+      title:`Extra Level ${i}`,
+      weekRange:'Custom progression',
+      exercises:[
+        {name:'Push-ups', sets:4, type:'reps', setsDefault:[20,20,20,20]},
+        {name:'Squats', sets:4, type:'reps', setsDefault:[25,25,25,25]},
+        {name:'Skill practice', sets:3, type:'reps', setsDefault:[10,10,10]},
+        {name:'Core hold', sets:3, type:'hold', setsDefault:[60,60,60]},
       ]
     };
   }
 }
+
 
 /* -------------------------
    Persistence helpers
@@ -463,3 +585,4 @@ renderAll();
   </script>
 </body>
 </html>
+
